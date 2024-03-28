@@ -1,7 +1,6 @@
+# Features
 
-##
-
-- uniapp
+- uni-app
 - vue3
 - vite
 - unocss
@@ -10,3 +9,5 @@
 - eslint
 - prettier
 - husky
+- uview plus
+- unplugin-auto-import

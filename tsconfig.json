@@ -7,7 +7,15 @@
       "@/*": ["./src/*"]
     },
     "lib": ["esnext", "dom"],
-    "types": ["@dcloudio/types"]
+    "types": [
+      "@dcloudio/types", // uni-app API 类型
+      "@uni-helper/uni-app-types", // uniapp 组件类型校验
+      "miniprogram-api-typings" // 原生微信小程序类型
+    ],
+    "ignoreDeprecations": "5.0"
+  },
+  "vueCompilerOptions": {
+    "nativeTags": ["block", "component", "template", "slot"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
