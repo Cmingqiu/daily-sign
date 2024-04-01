@@ -1,8 +1,8 @@
 <template>
   <view class="wrapper">
-    <view class="content">
+    <scroll-view class="content" scroll-y scroll-x>
       <slot />
-    </view>
+    </scroll-view>
   </view>
 </template>
 

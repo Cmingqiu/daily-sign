@@ -4,6 +4,7 @@
       <view class="item" v-for="(item, i) in recordList" :key="i">{{
         item
       }}</view>
+      <view v-if="!recordList.length" class="no-data-tip">暂无数据</view>
     </view>
   </LayoutContainer>
 </template>
@@ -17,8 +18,8 @@ onMounted(() => {
   const signedCacheKeys = uni.getStorageInfoSync().keys;
   signedCacheKeys.forEach(key => {
     const list = uni.getStorageSync(key);
-    recordList.value.push(`${key} ${list[0]}`);
-    recordList.value.push(`${key} ${list[1]}`);
+    list[0] && recordList.value.push(`${key} ${list[0]}`);
+    list[1] && recordList.value.push(`${key} ${list[1]}`);
   });
 });
 </script>

@@ -68,6 +68,7 @@ const jumpToRecord = () => {
 };
 
 onLoad(() => {
+  clearBeforeMonthCache();
   if (isWorkDay) {
     const todaySignRecord =
       uni.getStorageSync(dayjs().format('YYYY-MM-DD')) || [];
@@ -75,6 +76,19 @@ onLoad(() => {
     isAfternoonSigned.value = !!todaySignRecord[1];
   }
 });
+
+// 31天之前的缓存都会清除
+function clearBeforeMonthCache() {
+  const now = new Date().getTime(),
+    oneDay = 1000 * 60 * 60 * 24,
+    interval = 31;
+  const signedCacheKeys = uni.getStorageInfoSync().keys;
+  signedCacheKeys.forEach(key => {
+    if (Math.floor(now - new Date(key).getTime() / oneDay) >= interval) {
+      uni.removeStorageSync(key);
+    }
+  });
+}
 </script>
 
 <style lang="scss" scoped>
