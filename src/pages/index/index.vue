@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { onLoad } from '@dcloudio/uni-app';
+import { onLoad, onShow } from '@dcloudio/uni-app';
 import dayjs from 'dayjs';
 import { ref, computed } from 'vue';
 
@@ -34,17 +34,26 @@ const currentTime = ref<Date>(); // 当前时间
 const isForenoonSigned = ref<Boolean>(false); // 上午是否打卡了
 const isAfternoonSigned = ref<Boolean>(false); // 下午是否打卡了
 
-// 今天是工作日且是否都打完卡了
+// 判断当前时间是上班[0,12)还是下班[12,24)
+const isForenoon = computed(() => {
+  const hour = dayjs().hour();
+  return 0 <= hour && hour < 12;
+});
+// 休息日||工作日打完下班卡
 const notNeedSign = computed(
-  () =>
-    (isWorkDay && isForenoonSigned.value && isAfternoonSigned.value) ||
-    !isWorkDay
+  () => (isWorkDay && isAfternoonSigned.value) || !isWorkDay
 );
 const time = computed(() => dayjs(currentTime.value).format('HH:mm:ss'));
 const signButtonTitle = computed(() => {
   if (isForenoonSigned.value && isAfternoonSigned.value) return '今日已打卡';
-  else if (!isForenoonSigned.value) return '上班打卡';
-  else if (!isAfternoonSigned.value) return '下班打卡';
+  if (isForenoon.value && !isForenoonSigned.value) return '上班打卡';
+  else if (
+    // 上午打了上班卡 或者 下午没打下班卡
+    (isForenoon.value && isForenoonSigned.value) ||
+    (!isForenoon.value && !isAfternoonSigned.value)
+  )
+    return '下班打卡';
+  return '今日结束啦~';
 });
 
 setInterval(() => (currentTime.value = new Date()), 500);
@@ -56,9 +65,11 @@ const sign = () => {
   if (notNeedSign.value) return;
   const CACHE_KEYS = dayjs().format('YYYY-MM-DD');
   const todaySignRecord = uni.getStorageSync(CACHE_KEYS) || [];
-  if (!todaySignRecord.length) isForenoonSigned.value = true;
-  else if (todaySignRecord.length === 1) isAfternoonSigned.value = true;
-  todaySignRecord.push(dayjs(currentTime.value).format('HH:mm:ss'));
+  const t = dayjs(currentTime.value).format('HH:mm:ss');
+
+  todaySignRecord[isForenoon.value ? 0 : 1] = t;
+  if (todaySignRecord.length === 1) isForenoonSigned.value = true;
+  else if (todaySignRecord.length === 2) isAfternoonSigned.value = true;
   uni.setStorageSync(CACHE_KEYS, todaySignRecord);
 };
 
@@ -67,7 +78,7 @@ const jumpToRecord = () => {
   uni.navigateTo({ url: '/pages/record/index' });
 };
 
-onLoad(() => {
+const initState = () => {
   clearBeforeMonthCache();
   if (isWorkDay) {
     const todaySignRecord =
@@ -75,7 +86,10 @@ onLoad(() => {
     isForenoonSigned.value = !!todaySignRecord[0];
     isAfternoonSigned.value = !!todaySignRecord[1];
   }
-});
+};
+
+onLoad(initState);
+onShow(initState);
 
 // 31天之前的缓存都会清除
 function clearBeforeMonthCache() {
@@ -84,7 +98,7 @@ function clearBeforeMonthCache() {
     interval = 31;
   const signedCacheKeys = uni.getStorageInfoSync().keys;
   signedCacheKeys.forEach(key => {
-    if (Math.floor(now - new Date(key).getTime() / oneDay) >= interval) {
+    if (Math.floor((now - new Date(key).getTime()) / oneDay) >= interval) {
       uni.removeStorageSync(key);
     }
   });
