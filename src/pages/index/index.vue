@@ -12,7 +12,9 @@
         </view>
       </view>
 
-      <view :class="['sign-button', notNeedSign && 'disabled']" @click="sign">
+      <view
+        :class="['sign-button', (notNeedSign || !toggle) && 'disabled']"
+        @click="sign">
         <view class="title" v-if="isWorkDay">{{ signButtonTitle }} </view>
         <view class="title" v-else>今日休息</view>
         <view class="time">{{ time }}</view>
@@ -20,13 +22,46 @@
       <view class="record-button" @click="jumpToRecord">打卡记录</view>
     </view>
   </LayoutContainer>
+  <canvas canvas-id="canvas" class="canvas" />
 </template>
 
 <script setup lang="ts">
-import { onLoad, onShow } from '@dcloudio/uni-app';
+import { onShow } from '@dcloudio/uni-app';
 import dayjs from 'dayjs';
 import { ref, computed } from 'vue';
+import useFirework from './useFirework';
+import usePromise from '@/utils/usePromise';
 
+/* 打卡逻辑 structure
+'2024-03-31':['11:41:21':'17:30:32']
+*/
+const doSign = () => {
+  if (notNeedSign.value) return;
+  const CACHE_KEYS = dayjs().format('YYYY-MM-DD');
+  const todaySignRecord = uni.getStorageSync(CACHE_KEYS) || [];
+  const t = dayjs(currentTime.value).format('HH:mm:ss');
+  todaySignRecord[isForenoon.value ? 0 : 1] = t;
+  if (todaySignRecord.length === 1) isForenoonSigned.value = true;
+  else if (todaySignRecord.length === 2) isAfternoonSigned.value = true;
+  uni.setStorageSync(CACHE_KEYS, todaySignRecord);
+};
+
+let { _resolve } = usePromise(doSign);
+const { createFirework } = useFirework(() => {
+  _resolve(); // 执行打卡逻辑
+  // 重置状态，方便后续打卡
+  const { _resolve: r } = usePromise(doSign);
+  _resolve = r;
+  toggle.value = true;
+});
+
+const sign = () => {
+  if (!toggle.value || notNeedSign.value) return;
+  toggle.value = false;
+  createFirework();
+};
+
+const toggle = ref(true); // 防抖
 // 工作日
 const isWorkDay = dayjs().day() !== 0 && dayjs().day() !== 6;
 
@@ -58,21 +93,6 @@ const signButtonTitle = computed(() => {
 
 setInterval(() => (currentTime.value = new Date()), 500);
 
-/*打卡 structure
-'2024-03-31':['11:41:21':'17:30:32']
-*/
-const sign = () => {
-  if (notNeedSign.value) return;
-  const CACHE_KEYS = dayjs().format('YYYY-MM-DD');
-  const todaySignRecord = uni.getStorageSync(CACHE_KEYS) || [];
-  const t = dayjs(currentTime.value).format('HH:mm:ss');
-
-  todaySignRecord[isForenoon.value ? 0 : 1] = t;
-  if (todaySignRecord.length === 1) isForenoonSigned.value = true;
-  else if (todaySignRecord.length === 2) isAfternoonSigned.value = true;
-  uni.setStorageSync(CACHE_KEYS, todaySignRecord);
-};
-
 // 跳转打卡记录
 const jumpToRecord = () => {
   uni.navigateTo({ url: '/pages/record/index' });
@@ -88,7 +108,6 @@ const initState = () => {
   }
 };
 
-onLoad(initState);
 onShow(initState);
 
 // 31天之前的缓存都会清除
@@ -106,10 +125,19 @@ function clearBeforeMonthCache() {
 </script>
 
 <style lang="scss" scoped>
+.canvas {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
 .home {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  z-index: 1;
   .result-row {
     display: flex;
     justify-content: center;

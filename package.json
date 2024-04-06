@@ -55,6 +55,7 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-3081220230817001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-3081220230817001",
     "clipboard": "^2.0.11",
+    "confetti-ts-canvas": "^1.1.5",
     "dayjs": "^1.11.10",
     "uview-plus": "^3.1.49",
     "vue": "^3.2.45",

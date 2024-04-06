@@ -47,6 +47,9 @@ dependencies:
   clipboard:
     specifier: ^2.0.11
     version: 2.0.11
+  confetti-ts-canvas:
+    specifier: ^1.1.5
+    version: 1.1.5
   dayjs:
     specifier: ^1.11.10
     version: 1.11.10
@@ -4003,6 +4006,10 @@ packages:
   /concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
     dev: true
+
+  /confetti-ts-canvas@1.1.5:
+    resolution: {integrity: sha512-nL9i/zzo6qLulPQrtJD4igoUotVH601ojLM5/jclc0/qs8Ej5xMOE+DxU3+L5FqhvujAaxBdbO3kChnpSathTQ==}
+    dev: false
 
   /content-disposition@0.5.4:
     resolution: {integrity: sha512-FveZTNuGw04cxlAiWbzi6zTAL/lhehaWbTtgluJh4/E95DqMwTmha3KZN1aAWA8cFIhHzMZUvLevkw5Rqk+tSQ==}
