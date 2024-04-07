@@ -30,8 +30,7 @@
       <view
         :class="['sign-button', (notNeedSign || !toggle) && 'disabled']"
         @click="sign">
-        <view class="title" v-if="isWorkDay">{{ signButtonTitle }} </view>
-        <view class="title" v-else>今日休息</view>
+        <view class="title">{{ signButtonTitle }} </view>
         <view class="time">{{ time }}</view>
       </view>
       <view class="record-button" @click="jumpToRecord">打卡记录</view>
@@ -43,7 +42,6 @@
 <script setup lang="ts">
 import { onShow } from '@dcloudio/uni-app';
 import dayjs from 'dayjs';
-import calendar from 'chinese-calendar';
 import { ref, computed } from 'vue';
 import useFirework from './useFirework';
 import usePromise from '@/utils/usePromise';
@@ -78,9 +76,7 @@ const sign = () => {
   createFirework();
 };
 
-const toggle = ref(true); // 防抖
-// 工作日
-const isWorkDay = !calendar.isHoliday(dayjs().format('YYYY-MM-DD'));
+const toggle = ref(true); // 开关防抖
 
 const currentTime = ref<Date>(); // 当前时间
 const isForenoonSigned = ref<Boolean>(false); // 上午是否打卡了
@@ -91,13 +87,11 @@ const isForenoon = computed(() => {
   const hour = dayjs().hour();
   return 0 <= hour && hour < 12;
 });
-// 休息日||工作日打完下班卡
+// 上午打完上班卡，下午打完下班卡
 const notNeedSign = computed(
   () =>
-    (isWorkDay &&
-      ((isForenoon.value && isForenoonSigned.value) ||
-        (!isForenoon.value && isAfternoonSigned.value))) ||
-    !isWorkDay
+    (isForenoon.value && isForenoonSigned.value) ||
+    (!isForenoon.value && isAfternoonSigned.value)
 );
 const time = computed(() => dayjs(currentTime.value).format('HH:mm:ss'));
 const signButtonTitle = computed(() => {
@@ -119,12 +113,10 @@ const jumpToRecord = () => {
 
 const initState = () => {
   clearBeforeMonthCache();
-  if (isWorkDay) {
-    const todaySignRecord =
-      uni.getStorageSync(dayjs().format('YYYY-MM-DD')) || [];
-    isForenoonSigned.value = !!todaySignRecord[0];
-    isAfternoonSigned.value = !!todaySignRecord[1];
-  }
+  const todaySignRecord =
+    uni.getStorageSync(dayjs().format('YYYY-MM-DD')) || [];
+  isForenoonSigned.value = !!todaySignRecord[0];
+  isAfternoonSigned.value = !!todaySignRecord[1];
 };
 
 onShow(initState);
