@@ -4,11 +4,26 @@
       <view class="result-row">
         <view class="button">
           <text>上班8:30</text>
-          <text>{{ isForenoonSigned ? '已' : '未' }}打卡</text>
+          <view flex items-center mt-1>
+            <u-icon
+              v-if="isForenoonSigned"
+              name="checkmark-circle-fill"
+              color="rgb(136, 22, 236)"
+              size="28"></u-icon>
+            <text ml-1>{{ isForenoonSigned ? '已' : '未' }}打卡</text>
+          </view>
         </view>
         <view class="button">
           <text>下班17:30</text>
-          <text>{{ isAfternoonSigned ? '已' : '未' }}打卡</text>
+
+          <view flex items-center mt-1>
+            <u-icon
+              v-if="isAfternoonSigned"
+              name="checkmark-circle-fill"
+              color="rgb(136, 22, 236)"
+              size="28"></u-icon>
+            <text ml-1>{{ isAfternoonSigned ? '已' : '未' }}打卡</text>
+          </view>
         </view>
       </view>
 
@@ -88,12 +103,10 @@ const time = computed(() => dayjs(currentTime.value).format('HH:mm:ss'));
 const signButtonTitle = computed(() => {
   if (isForenoonSigned.value && isAfternoonSigned.value) return '今日已打卡';
   if (isForenoon.value && !isForenoonSigned.value) return '上班打卡';
-  else if (
-    // 上午打了上班卡 或者 下午没打下班卡
-    (isForenoon.value && isForenoonSigned.value) ||
-    (!isForenoon.value && !isAfternoonSigned.value)
-  )
+  else if (!isForenoon.value && !isAfternoonSigned.value) return '下班打卡';
+  else if (isForenoon.value && isForenoonSigned.value) {
     return '上班已打卡';
+  }
   return '今日结束啦~';
 });
 
@@ -143,7 +156,7 @@ function clearBeforeMonthCache() {
   flex-direction: column;
   align-items: center;
   position: relative;
-  z-index: 1;
+  z-index: 5;
   .result-row {
     display: flex;
     justify-content: center;
@@ -159,7 +172,6 @@ function clearBeforeMonthCache() {
       padding: 10rpx;
       text:last-child {
         font-size: 24rpx;
-        margin-top: 10rpx;
         color: $uni-text-color-disable;
       }
       &:first-child {
@@ -188,10 +200,10 @@ function clearBeforeMonthCache() {
     &.disabled::after {
       content: '';
       position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
+      left: -15rpx;
+      right: -15rpx;
+      top: -15rpx;
+      bottom: -15rpx;
       background: rgba(255, 255, 255, 0.6);
     }
   }
