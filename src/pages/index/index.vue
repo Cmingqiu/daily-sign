@@ -28,6 +28,7 @@
 <script setup lang="ts">
 import { onShow } from '@dcloudio/uni-app';
 import dayjs from 'dayjs';
+import calendar from 'chinese-calendar';
 import { ref, computed } from 'vue';
 import useFirework from './useFirework';
 import usePromise from '@/utils/usePromise';
@@ -48,7 +49,8 @@ const doSign = () => {
 
 let { _resolve } = usePromise(doSign);
 const { createFirework } = useFirework(() => {
-  _resolve(); // 执行打卡逻辑
+  // 执行打卡逻辑
+  _resolve();
   // 重置状态，方便后续打卡
   const { _resolve: r } = usePromise(doSign);
   _resolve = r;
@@ -63,7 +65,7 @@ const sign = () => {
 
 const toggle = ref(true); // 防抖
 // 工作日
-const isWorkDay = dayjs().day() !== 0 && dayjs().day() !== 6;
+const isWorkDay = !calendar.isHoliday(dayjs().format('YYYY-MM-DD'));
 
 const currentTime = ref<Date>(); // 当前时间
 const isForenoonSigned = ref<Boolean>(false); // 上午是否打卡了
@@ -76,7 +78,11 @@ const isForenoon = computed(() => {
 });
 // 休息日||工作日打完下班卡
 const notNeedSign = computed(
-  () => (isWorkDay && isAfternoonSigned.value) || !isWorkDay
+  () =>
+    (isWorkDay &&
+      ((isForenoon.value && isForenoonSigned.value) ||
+        (!isForenoon.value && isAfternoonSigned.value))) ||
+    !isWorkDay
 );
 const time = computed(() => dayjs(currentTime.value).format('HH:mm:ss'));
 const signButtonTitle = computed(() => {
@@ -87,7 +93,7 @@ const signButtonTitle = computed(() => {
     (isForenoon.value && isForenoonSigned.value) ||
     (!isForenoon.value && !isAfternoonSigned.value)
   )
-    return '下班打卡';
+    return '上班已打卡';
   return '今日结束啦~';
 });
 
@@ -173,6 +179,7 @@ function clearBeforeMonthCache() {
     justify-content: center;
     color: $uni-text-color-inverse;
     background: linear-gradient(to right, rgb(66, 83, 216), rgb(213, 51, 186));
+    box-shadow: 0 4rpx 15rpx 0 rgb(136, 22, 236);
     position: relative;
     .title {
       font-size: 38rpx;

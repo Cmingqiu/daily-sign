@@ -44,6 +44,9 @@ dependencies:
   '@dcloudio/uni-quickapp-webview':
     specifier: 3.0.0-3081220230817001
     version: 3.0.0-3081220230817001(postcss@8.4.38)(vue@3.2.45)
+  chinese-calendar:
+    specifier: ^1.0.3
+    version: 1.0.3
   clipboard:
     specifier: ^2.0.11
     version: 2.0.11
@@ -3917,6 +3920,10 @@ packages:
     resolution: {integrity: sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==}
     engines: {node: '>=10'}
     dev: true
+
+  /chinese-calendar@1.0.3:
+    resolution: {integrity: sha512-l1biPL0iAZYhgggJCOru23C+9aaXIXtz1PUgh6Xad6PwiNVl53FI9gtG5ufduoclJvjRBIGowQMyOjuj1Ep/MA==}
+    dev: false
 
   /chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}

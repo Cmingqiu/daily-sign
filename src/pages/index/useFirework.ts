@@ -23,7 +23,7 @@ export default function (cb?: () => void) {
         cb && cb();
       },
       displayFps: false,
-      gravity: 3
+      gravity: 2
     }
   );
 
