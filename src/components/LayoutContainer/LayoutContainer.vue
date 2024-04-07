@@ -1,8 +1,8 @@
 <template>
   <view class="wrapper">
-    <scroll-view class="content" scroll-y scroll-x>
+    <view class="content">
       <slot />
-    </scroll-view>
+    </view>
   </view>
 </template>
 
@@ -11,9 +11,8 @@
 <style lang="scss" scoped>
 .wrapper {
   padding: 20rpx;
-  height: 100vh;
   .content {
-    height: 100%;
+    min-height: calc(100vh - 40rpx);
     border-radius: 30rpx;
     padding: 20rpx;
     background-color: $uni-bg-color;

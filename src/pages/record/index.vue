@@ -1,10 +1,11 @@
 <template>
   <LayoutContainer>
     <view class="record">
-      <view class="item" v-for="(item, i) in recordList" :key="i">{{
+      <up-calendar :showTitle="false"></up-calendar>
+      <!-- <view class="item" v-for="(item, i) in recordList" :key="i">{{
         item
       }}</view>
-      <view v-if="!recordList.length" class="no-data-tip">暂无数据</view>
+      <view v-if="!recordList.length" class="no-data-tip">暂无数据</view> -->
     </view>
   </LayoutContainer>
 </template>

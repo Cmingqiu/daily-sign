@@ -36,7 +36,10 @@
       <view class="record-button" @click="jumpToRecord">打卡记录</view>
     </view>
   </LayoutContainer>
-  <canvas canvas-id="canvas" class="canvas" />
+  <l-confetti
+    class="canvas"
+    ref="confettiRef"
+    @done="fireworkFinish"></l-confetti>
 </template>
 
 <script setup lang="ts">
@@ -44,7 +47,6 @@ import { onShow } from '@dcloudio/uni-app';
 import dayjs from 'dayjs';
 import { ref, computed } from 'vue';
 import useFirework from './useFirework';
-import usePromise from '@/utils/usePromise';
 
 /* 打卡逻辑 structure
 '2024-03-31':['11:41:21':'17:30:32']
@@ -60,23 +62,13 @@ const doSign = () => {
   uni.setStorageSync(CACHE_KEYS, todaySignRecord);
 };
 
-let { _resolve } = usePromise(doSign);
-const { createFirework } = useFirework(() => {
-  // 执行打卡逻辑
-  _resolve();
-  // 重置状态，方便后续打卡
-  const { _resolve: r } = usePromise(doSign);
-  _resolve = r;
-  toggle.value = true;
-});
-
+const { createFirework, fireworkFinish, confettiRef, toggle } =
+  useFirework(doSign);
 const sign = () => {
   if (!toggle.value || notNeedSign.value) return;
   toggle.value = false;
   createFirework();
 };
-
-const toggle = ref(true); // 开关防抖
 
 const currentTime = ref<Date>(); // 当前时间
 const isForenoonSigned = ref<Boolean>(false); // 上午是否打卡了

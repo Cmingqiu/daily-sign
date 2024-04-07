@@ -1,45 +1,21 @@
-import {
-  Confetti,
-  ConfettiEjector,
-  CanvasRender,
-  CustomShape
-} from 'confetti-ts-canvas';
+import { ref } from 'vue';
+export default function (cb: () => void) {
+  const toggle = ref(true); // 开关防抖
+  const confettiRef = ref(); // 礼花组件
 
-export default function (cb?: () => void) {
-  let createFirework: () => void, canvasRender: CanvasRender;
-
-  const g = uni.createCanvasContext('canvas');
-  canvasRender = new CanvasRender();
-  canvasRender.init(
-    //必填 CanvasContext
-    g,
-    //以下参数全部可选填入
-    {
-      width: 375,
-      height: 667
-    },
-    {
-      onFinished() {
-        cb && cb();
-      },
-      displayFps: false,
+  // 礼花动画开始
+  function createFirework() {
+    confettiRef.value.play({
+      particleCount: 220,
+      spread: 70,
       gravity: 2
-    }
-  );
-
-  createFirework = () => {
-    const pao = new ConfettiEjector(canvasRender, {
-      limitAngle: [225, 315], //喷发角度区间[-∞,+∞]
-      count: 150 //喷发纸片数量
     });
+  }
+  // 礼花动画结束
+  function fireworkFinish() {
+    cb && cb();
+    toggle.value = true;
+  }
 
-    const boom = pao.create({
-      x: 0,
-      y: 0, //喷发位置
-      clampforce: [20, 60], //喷发力度
-      radius: 10 //纸片大小
-    });
-    pao.fire(boom);
-  };
-  return { createFirework };
+  return { createFirework, fireworkFinish, confettiRef, toggle };
 }
