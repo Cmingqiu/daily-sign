@@ -44,15 +44,9 @@ dependencies:
   '@dcloudio/uni-quickapp-webview':
     specifier: 3.0.0-3081220230817001
     version: 3.0.0-3081220230817001(postcss@8.4.38)(vue@3.2.45)
-  chinese-calendar:
-    specifier: ^1.0.3
-    version: 1.0.3
   clipboard:
     specifier: ^2.0.11
     version: 2.0.11
-  confetti-ts-canvas:
-    specifier: ^1.1.5
-    version: 1.1.5
   dayjs:
     specifier: ^1.11.10
     version: 1.11.10
@@ -4305,10 +4299,6 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /chinese-calendar@1.0.3:
-    resolution: {integrity: sha512-l1biPL0iAZYhgggJCOru23C+9aaXIXtz1PUgh6Xad6PwiNVl53FI9gtG5ufduoclJvjRBIGowQMyOjuj1Ep/MA==}
-    dev: false
-
   /chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
     engines: {node: '>= 8.10.0'}
@@ -4401,10 +4391,6 @@ packages:
   /concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
     dev: true
-
-  /confetti-ts-canvas@1.1.5:
-    resolution: {integrity: sha512-nL9i/zzo6qLulPQrtJD4igoUotVH601ojLM5/jclc0/qs8Ej5xMOE+DxU3+L5FqhvujAaxBdbO3kChnpSathTQ==}
-    dev: false
 
   /consola@3.2.3:
     resolution: {integrity: sha512-I5qxpzLv+sJhTVEoLYNcTW+bThDCPsit0vLNKShZx6rLtpilNpmmeTPaeqJb9ZE9dV3DGaeby6Vuhrw38WjeyQ==}

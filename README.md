@@ -4,7 +4,7 @@
 - vue3
 - ts
 - vite
-- dayjs（接入 chinese-calendar）
+- dayjs
 - scss
 - uview plus
 - pinia

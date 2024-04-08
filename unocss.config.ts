@@ -13,7 +13,9 @@ const remRE = /^-?[\.\d]+rem$/;
 
 export default defineConfig({
   presets: [presetWeapp(), presetWeappAttributify()],
-  rules: [[/^mt-(\d+)$/, ([, d]) => ({ 'margin-top': `${Number(d) * 8}rpx` })]],
+  rules: [
+    /* [/^mt-(\d+)$/, ([, d]) => ({ 'margin-top': `${Number(d) * 8}rpx` })] */
+  ],
   theme: {
     // 解决小程序不支持 * 选择器
     preflightRoot: ['page,::before,::after']
