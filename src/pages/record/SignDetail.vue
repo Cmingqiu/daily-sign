@@ -6,8 +6,8 @@
       <text text-lg font-bold>下班 {{ detail[1] || '未打卡' }}</text>
     </view>
     <view flex flex-col justify-center items-center v-else>
-      <image w-422 h-256 src="@/static/no-sign-record.png" mode="scaleToFill" />
-      <text mt-2>当天没有打卡记录</text>
+      <image h-211 mode="aspectFit" src="@/static/no-sign-record.svg" />
+      <text class="no-data-tip" mt-2>当天没有打卡记录</text>
     </view>
   </view>
 </template>

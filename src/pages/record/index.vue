@@ -9,6 +9,7 @@
         @onDayClick="onDayClick"
         @changeMonth="changeMonth" />
       <view
+        v-show="isShowTodayBtn"
         class="text-[#8816ec]"
         absolute
         top-20
@@ -35,19 +36,23 @@ interface CalenderDate {
   isCurM: boolean;
 }
 
-const calendarRef = ref();
+const calendarRef = ref(); // 日历组件
+const isShowTodayBtn = ref(false); // 是否显示回到今天按钮
 
 const { year, month, date } = getFormatDate(new Date());
 const actDay = ref<string[]>([`${year}-${month}-${date}`]); // 单选的日期
-const signedDay: string[] = reactive([]);
+const signedDay: string[] = reactive([]); // 正常打卡的日期
 
+// 单选当天的打卡详情
 const detail = computed<Array<string>>(() => {
   const signedValue = uni.getStorageSync(actDay.value[0]);
   return signedValue;
 });
 
 const onDayClick = ({ date }: { date: string; week: string }) => {
+  const { year, month, date: d } = getFormatDate(new Date());
   if (!actDay.value.includes(date)) actDay.value = [date];
+  isShowTodayBtn.value = date !== `${year}-${month}-${d}`;
 };
 
 const changeMonth = (dates: CalenderDate[]) => {
