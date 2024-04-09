@@ -25,6 +25,7 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import SignDetail from './SignDetail.vue';
+import getFormatDate from '@/utils/getFormatDate';
 
 interface CalenderDate {
   year: number;
@@ -35,7 +36,9 @@ interface CalenderDate {
 }
 
 const calendarRef = ref();
-const actDay = ref<string[]>([]); // 单选的日期
+
+const { year, month, date } = getFormatDate(new Date());
+const actDay = ref<string[]>([`${year}-${month}-${date}`]); // 单选的日期
 const signedDay: string[] = reactive([]);
 
 const detail = computed<Array<string>>(() => {
@@ -49,16 +52,11 @@ const onDayClick = ({ date }: { date: string; week: string }) => {
 
 const changeMonth = (dates: CalenderDate[]) => {
   const day = dates.find(d => Number(d.date) === 1 && d.isCurM);
-  if (day && actDay.value.length) {
-    actDay.value = [`${day.year}-${day.month}-${day.date}`];
-  }
+  if (day) actDay.value = [`${day.year}-${day.month}-${day.date}`];
 };
 
 const backToday = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth() + 1;
-  const date = today.getDate();
+  const { year, month, date } = getFormatDate(new Date());
   actDay.value = [`${year}-${month}-${date}`];
   calendarRef.value.changYearMonth(year, month);
 };
@@ -69,7 +67,7 @@ onMounted(() => {
     if (/(\d+)-(\d+)-(\d+)/.test(key)) {
       // 判断key是日期
       const list = uni.getStorageSync(key);
-      if (list.length === 2) {
+      if (list[0] && list[1]) {
         signedDay.push(key);
       }
     }

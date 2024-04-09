@@ -100,6 +100,7 @@ setInterval(() => (currentTime.value = new Date()), 500);
 
 // 跳转打卡记录
 const jumpToRecord = () => {
+  if (!toggle.value) return;
   uni.navigateTo({ url: '/pages/record/index' });
 };
 
@@ -195,7 +196,7 @@ function clearBeforeMonthCache() {
   .record-button {
     text-align: center;
     color: rgb(111, 12, 250);
-    margin-top: 20rpx;
+    margin-top: 40rpx;
   }
 }
 </style>
