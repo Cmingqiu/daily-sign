@@ -1,4 +1,12 @@
-import { defineConfig, presetUno, presetAttributify } from 'unocss';
+import {
+  defineConfig,
+  presetUno,
+  presetAttributify,
+  transformerVariantGroup
+} from 'unocss';
+
+// 指令
+import transformerDirectives from '@unocss/transformer-directives';
 
 import presetWeapp from 'unocss-preset-weapp';
 import {
@@ -28,7 +36,12 @@ export default defineConfig({
         i[1] = Number(value.slice(0, -3)) * 16 * 2 + `rpx`;
     });
   },
-  transformers: [transformerAttributify(), transformerClass()],
+  transformers: [
+    transformerAttributify(),
+    transformerClass(),
+    // @ts-expect-error
+    transformerDirectives()
+  ],
   shortcuts: [{ 'flex-center': 'flex items-center justify-center' }]
   // separators: '__'
 });
