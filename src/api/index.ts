@@ -19,7 +19,7 @@ interface Response<T> {
   status: 0;
 }
 
-const baseURL = 'https://worktime.icu';
+const baseURL = 'https://worktime.icu/worktime';
 
 function formatURL(url: string) {
   return url.startsWith('http') ? url : baseURL + url;
