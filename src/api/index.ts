@@ -35,8 +35,13 @@ export default function http<T>(config: RequestConfig) {
       },
       success(res) {
         const { statusCode, errMsg, data } = res as any as UniResponse<T>;
-        if (statusCode === 200 && data.status === 0) {
-          resolve(data.data);
+        if (statusCode === 200) {
+          if (!config.url.startsWith('http')) {
+            // 本业务逻辑
+            data.status === 0
+              ? resolve(data.data)
+              : uni.showToast({ title: data.msg, icon: 'error' });
+          } else resolve(data as T);
         } else {
           uni.showToast({ title: errMsg, icon: 'error' });
         }

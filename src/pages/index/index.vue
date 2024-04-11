@@ -56,8 +56,8 @@ import { isForenoon } from '@/utils/isForenoon';
 const doSign = async () => {
   if (notNeedSign.value) return;
   const forenoon = isForenoon();
-  forenoon ? (isForenoonSigned.value = true) : (isAfternoonSigned.value = true);
   await setRecords(new Date().getTime());
+  forenoon ? (isForenoonSigned.value = true) : (isAfternoonSigned.value = true);
 };
 
 const { createFirework, fireworkFinish, confettiRef, toggle } =

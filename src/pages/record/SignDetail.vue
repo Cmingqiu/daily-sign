@@ -1,6 +1,6 @@
 <template>
   <view class="border-[#8816ec]" mt-2 p-y-2 border-0 border-t-4 border-solid>
-    <view v-if="detail.length">
+    <view v-if="detail[0] || detail[1]">
       <text class="label">上班 {{ detail[0] || '未打卡' }}</text>
       <view h-200></view>
       <text class="label">下班 {{ detail[1] || '未打卡' }}</text>
@@ -15,7 +15,7 @@
 <script setup lang="ts">
 withDefaults(
   defineProps<{
-    detail: Array<string>;
+    detail: Array<string | null>;
   }>(),
   {
     detail: () => []
