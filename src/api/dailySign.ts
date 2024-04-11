@@ -1,10 +1,11 @@
 import http from '.';
+import { isForenoon } from '@/utils/isForenoon';
+import { getUnionId } from '@/utils/login';
 
-interface RecordList {
+export interface RecordList {
   date: string;
   clock_in: boolean;
   clock_out: boolean;
-
   detail: Array<RecordDetail>;
 }
 interface RecordDetail {
@@ -20,17 +21,12 @@ interface RecordDetail {
  * @param yearMonth 例如2024-04
  * @returns Promise<RecordList>
  */
-export function getRecordList(yearMonth: string) {
-  return http<RecordList>({
-    url: `/records/list/123446/${yearMonth}`,
+export async function getRecordList(yearMonth: string) {
+  const unionId = await getUnionId();
+  return http<RecordList[]>({
+    url: `/records/list/${unionId}/${yearMonth}`,
     method: 'GET'
   });
-}
-
-interface Record {
-  user_id: string;
-  timestamp: number;
-  record_type: number;
 }
 
 /**
@@ -38,10 +34,16 @@ interface Record {
  * @param data Record
  * @returns
  */
-export function setRecords(data: Record) {
+export async function setRecords(timestamp: number) {
+  const user_id = await getUnionId();
+  const forenoon = isForenoon(timestamp);
   return http({
     url: '/records',
     method: 'POST',
-    data
+    data: {
+      user_id,
+      timestamp,
+      record_type: forenoon ? 1 : 2 // 1上班  2 下班
+    }
   });
 }

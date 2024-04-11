@@ -47,19 +47,17 @@ import { onShow } from '@dcloudio/uni-app';
 import dayjs from 'dayjs';
 import { ref, computed } from 'vue';
 import useFirework from './useFirework';
+import { getRecordList, setRecords } from '@/api/dailySign';
+import { isForenoon } from '@/utils/isForenoon';
 
 /* 打卡逻辑 structure
 '2024-03-31':['11:41:21':'17:30:32']
 */
-const doSign = () => {
+const doSign = async () => {
   if (notNeedSign.value) return;
-  const CACHE_KEYS = dayjs().format('YYYY-MM-DD');
-  const todaySignRecord = uni.getStorageSync(CACHE_KEYS) || [];
-  const t = dayjs(currentTime.value).format('HH:mm:ss');
-  todaySignRecord[isForenoon.value ? 0 : 1] = t;
-  if (todaySignRecord.length === 1) isForenoonSigned.value = true;
-  else if (todaySignRecord.length === 2) isAfternoonSigned.value = true;
-  uni.setStorageSync(CACHE_KEYS, todaySignRecord);
+  const forenoon = isForenoon();
+  forenoon ? (isForenoonSigned.value = true) : (isAfternoonSigned.value = true);
+  await setRecords(new Date().getTime());
 };
 
 const { createFirework, fireworkFinish, confettiRef, toggle } =
@@ -70,27 +68,25 @@ const sign = () => {
   createFirework();
 };
 
-const currentTime = ref<Date>(); // 当前时间
+const currentTime = ref<Date>(new Date()); // 当前时间
 const isForenoonSigned = ref<Boolean>(false); // 上午是否打卡了
 const isAfternoonSigned = ref<Boolean>(false); // 下午是否打卡了
 
-// 判断当前时间是上班[0,12)还是下班[12,24)
-const isForenoon = computed(() => {
-  const hour = dayjs().hour();
-  return 0 <= hour && hour < 12;
-});
 // 上午打完上班卡，下午打完下班卡
-const notNeedSign = computed(
-  () =>
-    (isForenoon.value && isForenoonSigned.value) ||
-    (!isForenoon.value && isAfternoonSigned.value)
-);
+const notNeedSign = computed(() => {
+  const forenoon = isForenoon();
+  return (
+    (forenoon && isForenoonSigned.value) ||
+    (!forenoon && isAfternoonSigned.value)
+  );
+});
 const time = computed(() => dayjs(currentTime.value).format('HH:mm:ss'));
 const signButtonTitle = computed(() => {
+  const forenoon = isForenoon();
   if (isForenoonSigned.value && isAfternoonSigned.value) return '今日已打卡';
-  if (isForenoon.value && !isForenoonSigned.value) return '上班打卡';
-  else if (!isForenoon.value && !isAfternoonSigned.value) return '下班打卡';
-  else if (isForenoon.value && isForenoonSigned.value) {
+  if (forenoon && !isForenoonSigned.value) return '上班打卡';
+  else if (!forenoon && !isAfternoonSigned.value) return '下班打卡';
+  else if (forenoon && isForenoonSigned.value) {
     return '上班已打卡';
   }
   return '今日结束啦~';
@@ -104,12 +100,14 @@ const jumpToRecord = () => {
   uni.navigateTo({ url: '/pages/record/index' });
 };
 
-const initState = () => {
-  clearBeforeMonthCache();
-  const todaySignRecord =
-    uni.getStorageSync(dayjs().format('YYYY-MM-DD')) || [];
-  isForenoonSigned.value = !!todaySignRecord[0];
-  isAfternoonSigned.value = !!todaySignRecord[1];
+const initState = async () => {
+  // clearBeforeMonthCache();
+  const today = dayjs(currentTime.value).format('YYYY-MM-DD');
+  const recordList = (await getRecordList(today.slice(0, 7))) || [];
+  // 今天的打卡详情
+  const todayRecord = recordList.find(record => record.date === today);
+  isForenoonSigned.value = !!todayRecord?.clock_in;
+  isAfternoonSigned.value = !!todayRecord?.clock_out;
 };
 
 onShow(initState);
