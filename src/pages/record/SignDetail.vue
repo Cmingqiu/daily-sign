@@ -23,7 +23,7 @@ withDefaults(
 );
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .label {
   @apply text-lg font-bold;
 }
