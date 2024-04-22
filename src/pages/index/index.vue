@@ -6,11 +6,11 @@
           <text>上班8:30</text>
           <view flex items-center mt-1>
             <u-icon
-              v-if="isForenoonSigned"
+              v-if="wordOnTime"
               name="checkmark-circle-fill"
-              color="rgb(136, 22, 236)"
+              :color="isLate ? 'rgb(255, 128, 64)' : 'rgb(136, 22, 236)'"
               size="28"></u-icon>
-            <text ml-1>{{ isForenoonSigned ? '已' : '未' }}打卡</text>
+            <text ml-1>{{ wordOnTime ? wordOnTime : '未打卡' }}</text>
           </view>
         </view>
         <view class="button">
@@ -18,11 +18,11 @@
 
           <view flex items-center mt-1>
             <u-icon
-              v-if="isAfternoonSigned"
+              v-if="wordOffTime"
               name="checkmark-circle-fill"
               color="rgb(136, 22, 236)"
               size="28"></u-icon>
-            <text ml-1>{{ isAfternoonSigned ? '已' : '未' }}打卡</text>
+            <text ml-1>{{ wordOffTime ? wordOffTime : '未打卡' }}</text>
           </view>
         </view>
       </view>
@@ -43,21 +43,22 @@
 </template>
 
 <script setup lang="ts">
-import { onShow } from '@dcloudio/uni-app';
+import { onShow, onUnload } from '@dcloudio/uni-app';
 import dayjs from 'dayjs';
 import { ref, computed } from 'vue';
 import useFirework from './useFirework';
 import { getRecordList, setRecords } from '@/api/dailySign';
 import { isForenoon } from '@/utils/isForenoon';
+import { RECORD_TYPE } from '@/config/enums';
+import { onBeforeUnmount } from 'vue';
 
 /* 打卡逻辑 structure
 '2024-03-31':['11:41:21':'17:30:32']
 */
 const doSign = async () => {
   if (notNeedSign.value) return;
-  const forenoon = isForenoon();
   await setRecords(new Date().getTime());
-  forenoon ? (isForenoonSigned.value = true) : (isAfternoonSigned.value = true);
+  initState();
 };
 
 const { createFirework, fireworkFinish, confettiRef, toggle } =
@@ -69,30 +70,37 @@ const sign = () => {
 };
 
 const currentTime = ref<Date>(new Date()); // 当前时间
-const isForenoonSigned = ref<Boolean>(false); // 上午是否打卡了
-const isAfternoonSigned = ref<Boolean>(false); // 下午是否打卡了
+const wordOnTime = ref<string>(''); // 上班打卡时间
+const wordOffTime = ref<string>(''); // 下班打卡时间
 
 // 上午打完上班卡，下午打完下班卡
 const notNeedSign = computed(() => {
   const forenoon = isForenoon();
-  return (
-    (forenoon && isForenoonSigned.value) ||
-    (!forenoon && isAfternoonSigned.value)
-  );
+  return (forenoon && wordOnTime.value) || (!forenoon && wordOffTime.value);
 });
 const time = computed(() => dayjs(currentTime.value).format('HH:mm:ss'));
+// 上午是否迟到
+const isLate = computed(() =>
+  wordOnTime.value
+    ? new Date(
+        `${dayjs().format('YYYY-MM-DD')} ${wordOnTime.value}`
+      ).getTime() >=
+      new Date(`${dayjs().format('YYYY-MM-DD')} 08:31:00`).getTime()
+    : false
+);
 const signButtonTitle = computed(() => {
   const forenoon = isForenoon();
-  if (isForenoonSigned.value && isAfternoonSigned.value) return '今日已打卡';
-  if (forenoon && !isForenoonSigned.value) return '上班打卡';
-  else if (!forenoon && !isAfternoonSigned.value) return '下班打卡';
-  else if (forenoon && isForenoonSigned.value) {
+  if (wordOnTime.value && wordOffTime.value) return '今日已打卡';
+  if (forenoon && !wordOnTime.value)
+    return isLate.value ? '迟到打卡' : '上班打卡';
+  else if (!forenoon && !wordOffTime.value) return '下班打卡';
+  else if (forenoon && wordOnTime.value) {
     return '上班已打卡';
   }
   return '今日结束啦~';
 });
 
-setInterval(() => (currentTime.value = new Date()), 500);
+const timer = setInterval(() => (currentTime.value = new Date()), 500);
 
 // 跳转打卡记录
 const jumpToRecord = () => {
@@ -106,11 +114,26 @@ const initState = async () => {
   const recordList = (await getRecordList(today.slice(0, 7))) || [];
   // 今天的打卡详情
   const todayRecord = recordList.find(record => record.date === today);
-  isForenoonSigned.value = !!todayRecord?.clock_in;
-  isAfternoonSigned.value = !!todayRecord?.clock_out;
+  if (todayRecord) {
+    const workOn = todayRecord.detail.findLast(
+      ({ record_type }) => record_type === RECORD_TYPE.ON
+    );
+    const workOff = todayRecord.detail.find(
+      ({ record_type }) => record_type === RECORD_TYPE.OFF
+    );
+
+    wordOnTime.value = workOn?.timestamp
+      ? dayjs(workOn.timestamp).format('HH:mm:ss')
+      : '';
+    wordOffTime.value = workOff?.timestamp
+      ? dayjs(workOff.timestamp).format('HH:mm:ss')
+      : '';
+  }
 };
 
 onShow(initState);
+onBeforeUnmount(() => clearInterval(timer));
+onUnload(() => clearInterval(timer));
 
 // 31天之前的缓存都会清除
 function clearBeforeMonthCache() {
