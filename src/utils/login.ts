@@ -8,7 +8,6 @@ export function login() {
       success: async res => {
         if (res.code) {
           const result = await jscode2session(res.code);
-          uni.setStorageSync(UNION_ID, result.unionid);
           resolve(result.unionid);
         } else {
           reject('登录失败');
@@ -24,9 +23,10 @@ export function login() {
 export function getUnionId() {
   return new Promise(async (resolve, reject) => {
     const unionId = uni.getStorageSync(UNION_ID);
-    if (unionId) resolve(unionId);
+    if (unionId) return resolve(unionId);
     try {
       const unionId = await login();
+      uni.setStorageSync(UNION_ID, unionId);
       resolve(unionId);
     } catch (error) {
       reject(error);

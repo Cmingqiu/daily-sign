@@ -77,9 +77,13 @@ const onDayClick = ({ date }: { date: string; week: string }) => {
   isShowTodayBtn.value = date !== `${year}-${month}-${d}`;
 };
 
+// 切换月份
 const changeMonth = (dates: CalenderDate[]) => {
   const day = dates.find(d => Number(d.date) === 1 && d.isCurM);
-  if (day) actDay.value = [`${day.year}-${day.month}-${day.date}`];
+  if (day) {
+    actDay.value = [`${day.year}-${day.month}-${day.date}`];
+    fetchRecordList(`${day.year}-${day.month}`);
+  }
 };
 
 // 回到今天
@@ -87,12 +91,15 @@ const backToday = () => {
   const { year, month, date } = getFormatDate(new Date());
   actDay.value = [`${year}-${month}-${date}`];
   calendarRef.value.changYearMonth(year, month);
+  fetchRecordList(`${year}-${month}`);
 };
 
-onMounted(async () => {
-  const today = dayjs().format('YYYY-MM');
-  curMonthRecords.value = (await getRecordList(today)) || [];
-});
+// 从服务端请求一个月中的打卡记录
+async function fetchRecordList(day = dayjs().format('YYYY-MM')) {
+  curMonthRecords.value = (await getRecordList(day)) || [];
+}
+
+onMounted(fetchRecordList);
 </script>
 
 <style lang="scss" scoped>
