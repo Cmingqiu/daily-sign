@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-export default function (cb: () => void) {
+export default function (cb?: () => void) {
   const toggle = ref(true); // 开关防抖
   const confettiRef = ref(); // 礼花组件
 

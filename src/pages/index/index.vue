@@ -34,6 +34,7 @@
         <view class="time">{{ time }}</view>
       </view>
       <view class="record-button" @click="jumpToRecord">打卡记录</view>
+      <view>{{ address }}</view>
     </view>
   </LayoutContainer>
   <l-confetti
@@ -47,10 +48,13 @@ import { onShow, onUnload } from '@dcloudio/uni-app';
 import dayjs from 'dayjs';
 import { ref, computed } from 'vue';
 import useFirework from './useFirework';
+import useLocation from './useLocation';
 import { getRecordList, setRecords } from '@/api/dailySign';
 import { isForenoon } from '@/utils/isForenoon';
 import { RECORD_TYPE } from '@/config/enums';
 import { onBeforeUnmount } from 'vue';
+
+const { address } = useLocation();
 
 /* 打卡逻辑 structure
 '2024-03-31':['11:41:21':'17:30:32']
@@ -61,11 +65,11 @@ const doSign = async () => {
   initState();
 };
 
-const { createFirework, fireworkFinish, confettiRef, toggle } =
-  useFirework(doSign);
-const sign = () => {
+const { createFirework, fireworkFinish, confettiRef, toggle } = useFirework();
+const sign = async () => {
   if (!toggle.value || notNeedSign.value) return;
   toggle.value = false;
+  await doSign();
   createFirework();
 };
 
