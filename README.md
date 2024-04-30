@@ -7,6 +7,7 @@
 - dayjs
 - scss
 - uview plus
+- uni-ui
 - pinia
 - pinia-plugin-persist-uni
 

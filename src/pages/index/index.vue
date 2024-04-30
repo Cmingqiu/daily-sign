@@ -27,7 +27,10 @@
         </view>
       </view>
 
-      <view mt-5 mb-5>{{ positiveWord }}</view>
+      <!-- 鼓励语 -->
+      <view class="positive-word" mt-5 mb-5 text-center text-40>{{
+        positiveWord
+      }}</view>
 
       <view
         :class="['sign-button', (notNeedSign || !toggle) && 'disabled']"
@@ -36,7 +39,16 @@
         <view class="time">{{ time }}</view>
       </view>
       <view class="record-button" @click="jumpToRecord">打卡记录</view>
-      <view mt-5>{{ address }}</view>
+
+      <!-- 位置 -->
+      <view mt-5 flex items-center v-show="address">
+        <uni-icons
+          mr-2
+          type="paperplane-filled"
+          color="rgb(136, 22, 236)"
+          size="24" />
+        {{ address }}
+      </view>
     </view>
   </LayoutContainer>
   <l-confetti
@@ -234,6 +246,14 @@ function clearBeforeMonthCache() {
     text-align: center;
     color: rgb(111, 12, 250);
     margin-top: 40rpx;
+  }
+
+  .positive-word {
+    background: linear-gradient(to right, red, blue);
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    text-fill-color: transparent;
   }
 }
 </style>
