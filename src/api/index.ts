@@ -36,7 +36,10 @@ export default function http<T>(config: RequestConfig) {
       success(res) {
         const { statusCode, errMsg, data } = res as any as UniResponse<T>;
         if (statusCode === 200) {
-          if (!config.url.startsWith('http')) {
+          if (
+            !config.url.startsWith('http') &&
+            !config.url.startsWith('/auth')
+          ) {
             // 本业务逻辑
             data.status === 0
               ? resolve(data.data)

@@ -72,7 +72,7 @@
   </view>
 </template>
 <script>
-import { getMonthHoliday } from '@/api/holiday';
+import { getHolidayInfo } from '@/api/holiday';
 export default {
   props: {
     // 星期几为第一天(0为星期日)
@@ -152,10 +152,20 @@ export default {
     }
   },
   methods: {
+    // 请求节假日信息
     fetchHoliday(y, m) {
-      getMonthHoliday(y, m).then(res => {
+      const CACHE_KEY = `holiday_${y}`;
+      const yearHolidayCache = uni.getStorageSync(CACHE_KEY);
+      if (yearHolidayCache) {
+        this.monthHoliday = yearHolidayCache;
+        return;
+      }
+      getHolidayInfo(y).then(res => {
         const { code, holiday } = res;
-        if (code === 0) this.monthHoliday = holiday;
+        if (code === 0) {
+          this.monthHoliday = holiday;
+          uni.setStorageSync(CACHE_KEY, holiday);
+        }
       });
     },
     isSigned(item) {
@@ -339,6 +349,8 @@ export default {
     },
     //改变年月
     changYearMonth(y, m) {
+      y = parseInt(y);
+      m = parseInt(m);
       this.dates = this.monthDay(y, m);
       this.y = y;
       this.m = m;

@@ -17,10 +17,19 @@ interface HolidayTypeResponse {
 
 /**
  * 查询当年当月的节假日
+ * @param year 查询某年节假日 默认当年
+ * @param month 查询某月节假日
  */
-export function getMonthHoliday(year: string | number, month: string | number) {
+export function getHolidayInfo(
+  year?: string | number,
+  month?: string | number
+) {
   return http<HolidayTypeResponse>({
-    url: `https://timor.tech/api/holiday/year/${year}-${month}`
+    url: `https://timor.tech/api/holiday/year/${
+      year !== undefined
+        ? `${year}${month !== undefined ? `-${month}` : ''}`
+        : ''
+    }`
   });
 }
 
