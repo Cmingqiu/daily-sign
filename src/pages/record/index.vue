@@ -39,7 +39,6 @@ interface CalenderDate {
 }
 
 const calendarRef = ref(); // 日历组件
-const isShowTodayBtn = ref(false); // 是否显示回到今天按钮
 
 const { year, month, date } = getFormatDate(new Date());
 const actDay = ref<string[]>([`${year}-${month}-${date}`]); // 单选的日期
@@ -51,6 +50,12 @@ const signedDay = computed(() =>
     .filter(record => record.clock_in && record.clock_in)
     .map(record => record.date)
 );
+
+// 是否显示回到今天按钮
+const isShowTodayBtn = computed(() => {
+  const { year, month, date: d } = getFormatDate(new Date());
+  return actDay.value[0] !== `${year}-${month}-${d}`;
+});
 
 // 单选当天的打卡详情
 const detail = computed<Array<string | null>>(() => {
@@ -72,9 +77,7 @@ const detail = computed<Array<string | null>>(() => {
 });
 
 const onDayClick = ({ date }: { date: string; week: string }) => {
-  const { year, month, date: d } = getFormatDate(new Date());
   if (!actDay.value.includes(date)) actDay.value = [date];
-  isShowTodayBtn.value = date !== `${year}-${month}-${d}`;
 };
 
 // 切换月份

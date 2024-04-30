@@ -72,6 +72,7 @@
   </view>
 </template>
 <script>
+import { getMonthHoliday } from '@/api/holiday';
 export default {
   props: {
     // 星期几为第一天(0为星期日)
@@ -126,7 +127,8 @@ export default {
       dates: [], // 当前月的日期数据
       positionTop: 0,
       choose: '',
-      chooseArr: []
+      chooseArr: [],
+      monthHoliday: {} // 当月节假日
     };
   },
   created() {
@@ -134,6 +136,9 @@ export default {
   },
   mounted() {
     // this.choose = this.getToday().date;
+    const y = new Date().getFullYear(),
+      m = new Date().getMonth() + 1;
+    this.fetchHoliday(y, m);
   },
   computed: {
     // 顶部星期栏
@@ -147,6 +152,12 @@ export default {
     }
   },
   methods: {
+    fetchHoliday(y, m) {
+      getMonthHoliday(y, m).then(res => {
+        const { code, holiday } = res;
+        if (code === 0) this.monthHoliday = holiday;
+      });
+    },
     isSigned(item) {
       const dateString = `${item.year}-${item.month}-${item.date}`;
       return this.signedDay.includes(dateString);
@@ -252,7 +263,11 @@ export default {
       let ymd = `${y}/${m}/${d}`;
       let formatDY = new Date(ymd.replace(/-/g, '/'));
       let week = formatDY.getDay();
-      if (week == 0 || week == 6) {
+      if (this.monthHoliday[`${m}-${d}`]?.holiday) {
+        return false;
+      } else if (this.monthHoliday[`${m}-${d}`]) {
+        return true;
+      } else if (week == 0 || week == 6) {
         return false;
       } else {
         return true;
@@ -344,6 +359,7 @@ export default {
           this.m = this.m + 1;
         }
       }
+      this.fetchHoliday(this.y, this.m);
       this.dates = this.monthDay(this.y, this.m);
       this.$emit('changeMonth', this.dates);
     }

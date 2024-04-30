@@ -27,6 +27,8 @@
         </view>
       </view>
 
+      <view mt-5 mb-5>{{ positiveWord }}</view>
+
       <view
         :class="['sign-button', (notNeedSign || !toggle) && 'disabled']"
         @click="sign">
@@ -34,7 +36,7 @@
         <view class="time">{{ time }}</view>
       </view>
       <view class="record-button" @click="jumpToRecord">打卡记录</view>
-      <view>{{ address }}</view>
+      <view mt-5>{{ address }}</view>
     </view>
   </LayoutContainer>
   <l-confetti
@@ -50,6 +52,7 @@ import { ref, computed } from 'vue';
 import useFirework from './useFirework';
 import useLocation from './useLocation';
 import { getRecordList, setRecords } from '@/api/dailySign';
+import { getLatestHoliday } from '@/api/holiday';
 import { isForenoon } from '@/utils/isForenoon';
 import { RECORD_TYPE } from '@/config/enums';
 import { onBeforeUnmount } from 'vue';
@@ -76,6 +79,7 @@ const sign = async () => {
 const currentTime = ref<Date>(new Date()); // 当前时间
 const wordOnTime = ref<string>(''); // 上班打卡时间
 const wordOffTime = ref<string>(''); // 下班打卡时间
+const positiveWord = ref<string>(''); // 鼓励语
 
 // 上午打完上班卡，下午打完下班卡
 const notNeedSign = computed(() => {
@@ -135,9 +139,17 @@ const initState = async () => {
   }
 };
 
+fetchTTS();
 onShow(initState);
 onBeforeUnmount(() => clearInterval(timer));
 onUnload(() => clearInterval(timer));
+
+async function fetchTTS() {
+  try {
+    const { code, tts } = await getLatestHoliday();
+    if (code === 0) positiveWord.value = tts;
+  } catch (error) {}
+}
 
 // 31天之前的缓存都会清除
 function clearBeforeMonthCache() {
@@ -194,7 +206,7 @@ function clearBeforeMonthCache() {
     width: 300rpx;
     height: 300rpx;
     border-radius: 50%;
-    margin-top: 280rpx;
+    margin-top: 200rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
