@@ -1,0 +1,25 @@
+## 订阅消息发送
+POST https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=80_q4K00UNPFtbcB699dfZ5TCbhPtQVHmrsAjvowhNQJbJ2A5p3EkDL60V9T5gmAaPSZyjaKo-fd8lqLe6VU29WyILddf-BFwyuTTQO9_CwElUDH10MTstDolBAVM8IMJcAAAOSP
+
+{
+  "template_id":"9xs3YMumSF-n5N29nxsdjaVMH6Lc2or07-iVvYS1zko",
+  "page":"pages/index/index",
+  "touser":"oV4Vt5HjC0icYHcZ8oDE9TZSgABY",
+  "data":{
+    "thing1": {
+          "value": "打卡签到"
+      },
+      "time23": {
+          "value": "2015年01月05日"
+      }
+  },
+  "miniprogram_state":"trial",
+  "lang":"zh_CN"
+}
+
+
+
+### 获取接口调用凭据
+GET https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxc9b235b0270b2c52&secret=1b2bd46f0317cf956e2fd1ec7f202823
+
+

@@ -60,22 +60,20 @@
 <script setup lang="ts">
 import { onShow, onUnload } from '@dcloudio/uni-app';
 import dayjs from 'dayjs';
-import { ref, computed } from 'vue';
+import { ref, computed, onBeforeUnmount } from 'vue';
 import useFirework from './useFirework';
 import useLocation from './useLocation';
 import { getRecordList, setRecords } from '@/api/dailySign';
 import { getLatestHoliday } from '@/api/holiday';
 import { isForenoon } from '@/utils/isForenoon';
 import { RECORD_TYPE } from '@/config/enums';
-import { onBeforeUnmount } from 'vue';
+import { SIGN_NOTIFY_ID } from '@/config/const';
+import { subscribeCache } from '@/utils/cache';
 
 const { address } = useLocation();
 
-/* 打卡逻辑 structure
-'2024-03-31':['11:41:21':'17:30:32']
-*/
+// 打卡逻辑
 const doSign = async () => {
-  if (notNeedSign.value) return;
   await setRecords(new Date().getTime());
   initState();
 };
@@ -83,6 +81,10 @@ const doSign = async () => {
 const { createFirework, fireworkFinish, confettiRef, toggle } = useFirework();
 const sign = async () => {
   if (!toggle.value || notNeedSign.value) return;
+
+  // 消息订阅
+  triggerSubscribe();
+
   toggle.value = false;
   await doSign();
   createFirework();
@@ -151,16 +153,51 @@ const initState = async () => {
   }
 };
 
-fetchTTS();
-onShow(initState);
+onShow(() => {
+  fetchTTS();
+  initState();
+});
 onBeforeUnmount(() => clearInterval(timer));
 onUnload(() => clearInterval(timer));
 
+// 获取鼓励语
 async function fetchTTS() {
   try {
     const { code, tts } = await getLatestHoliday();
     if (code === 0) positiveWord.value = tts;
   } catch (error) {}
+}
+
+/**
+ * 订阅打卡通知
+ */
+function triggerSubscribe() {
+  if (subscribeCache.get()) return;
+  subscribeCache.set();
+  uni.requestSubscribeMessage({
+    tmplIds: [SIGN_NOTIFY_ID],
+    success(res) {
+      console.log('requestSubscribeMessage success: ', res);
+      const status = res[SIGN_NOTIFY_ID as keyof typeof res];
+      if (status === 'reject') {
+        /* uni.showModal({
+            title: '提示',
+            content: '请在设置中开启订阅',
+            showCancel: true,
+            success: ({ confirm, cancel }) => {
+              if (confirm) uni.openSetting({ withSubscriptions: true });
+            }
+          }); */
+      }
+    },
+    fail(err) {
+      uni.showToast({
+        title: err.errMsg,
+        icon: 'error',
+        mask: true
+      });
+    }
+  });
 }
 
 // 31天之前的缓存都会清除

@@ -53,7 +53,11 @@ export default function http<T>(config: RequestConfig) {
         uni.showToast({ title: '请求失败！', icon: 'error' });
         reject(error);
       },
-      complete() {}
+      complete({ data }: any) {
+        console.info('请求log====> ', formatURL(config.url));
+        console.log(data);
+        console.info('======');
+      }
     });
   });
 }
