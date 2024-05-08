@@ -9,6 +9,28 @@
       "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
     }
   },
+  "tabBar": {
+    "list": [
+      {
+        "text": "打卡",
+        "pagePath": "pages/index/index"
+      },
+      {
+        "text": "记录",
+        "pagePath": "pages/record/index"
+      },
+      {
+        "text": "我的",
+        "pagePath": "pages/mine/index"
+      }
+    ],
+    "color": "#333333",
+    "selectedColor": "#8816ec",
+    "backgroundColor": "#ffffff",
+    "midButton": {
+      "text": "home"
+    }
+  },
   "pages": [
     {
       "path": "pages/index/index",
@@ -20,6 +42,12 @@
       "path": "pages/record/index",
       "style": {
         "navigationBarTitleText": "打卡记录"
+      }
+    },
+    {
+      "path": "pages/mine/index",
+      "style": {
+        "navigationBarTitleText": "我的"
       }
     }
   ],

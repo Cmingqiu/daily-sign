@@ -24,7 +24,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue';
+import { onShow } from '@dcloudio/uni-app';
+import { ref, computed } from 'vue';
 import SignDetail from './SignDetail.vue';
 import getFormatDate from '@/utils/getFormatDate';
 import { getRecordList, type RecordList } from '@/api/dailySign';
@@ -102,7 +103,7 @@ async function fetchRecordList(day = dayjs().format('YYYY-MM')) {
   curMonthRecords.value = (await getRecordList(day)) || [];
 }
 
-onMounted(fetchRecordList);
+onShow(fetchRecordList);
 </script>
 
 <style lang="scss" scoped>

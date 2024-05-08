@@ -47,3 +47,23 @@ export async function setRecords(timestamp: number) {
     }
   });
 }
+
+/**
+ * 更新打卡记录
+ * @param data Record
+ * @returns
+ */
+export async function updateRecords(id: number, timestamp: number) {
+  const user_id = await getUnionId();
+  const forenoon = isForenoon(timestamp);
+  return http({
+    url: '/records',
+    method: 'PUT',
+    data: {
+      id,
+      user_id,
+      timestamp,
+      record_type: forenoon ? 1 : 2 // 1上班  2 下班
+    }
+  });
+}

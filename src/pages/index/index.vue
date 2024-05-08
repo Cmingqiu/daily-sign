@@ -38,7 +38,9 @@
         <view class="title">{{ signButtonTitle }} </view>
         <view class="time">{{ time }}</view>
       </view>
-      <view class="record-button" @click="jumpToRecord">打卡记录</view>
+      <view class="record-button" @click="cancelOneSubscribe"
+        >取消当次订阅</view
+      >
 
       <!-- 位置 -->
       <view mt-5 flex items-center v-show="address">
@@ -65,6 +67,7 @@ import useFirework from './useFirework';
 import useLocation from './useLocation';
 import { getRecordList, setRecords } from '@/api/dailySign';
 import { getLatestHoliday } from '@/api/holiday';
+import { cancelOneSubscribeAPI } from '@/api/subscribe';
 import { isForenoon } from '@/utils/isForenoon';
 import { RECORD_TYPE } from '@/config/enums';
 import { SIGN_NOTIFY_ID } from '@/config/const';
@@ -200,6 +203,14 @@ function triggerSubscribe() {
   });
 }
 
+/**
+ * 取消当次订阅
+ */
+async function cancelOneSubscribe() {
+  await cancelOneSubscribeAPI();
+  uni.showToast({ title: '取消成功', icon: 'success' });
+}
+
 // 31天之前的缓存都会清除
 function clearBeforeMonthCache() {
   const now = new Date().getTime(),
@@ -282,7 +293,7 @@ function clearBeforeMonthCache() {
   .record-button {
     text-align: center;
     color: rgb(111, 12, 250);
-    margin-top: 40rpx;
+    margin-top: 80rpx;
   }
 
   .positive-word {
