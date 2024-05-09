@@ -1,8 +1,11 @@
 <template>
   <LayoutContainer>
-    <div class="mine">我的</div>
-    <open-data type="userAvatarUrl"></open-data>
-    <open-data type="userNickName"></open-data>
+    <view flex items-center>
+      <view class="rounded-[50%]" w-100 h-100 mr-3 overflow-hidden>
+        <open-data type="userAvatarUrl" />
+      </view>
+      <open-data font-bold type="userNickName" />
+    </view>
   </LayoutContainer>
 </template>
 

@@ -70,8 +70,11 @@ import { getLatestHoliday } from '@/api/holiday';
 import { cancelOneSubscribeAPI } from '@/api/subscribe';
 import { isForenoon } from '@/utils/isForenoon';
 import { RECORD_TYPE } from '@/config/enums';
-import { SIGN_NOTIFY_ID } from '@/config/const';
-import { subscribeCache } from '@/utils/cache';
+import {
+  SIGN_NOTIFY_ID1,
+  SIGN_NOTIFY_ID2,
+  SIGN_NOTIFY_ID3
+} from '@/config/const';
 
 const { address } = useLocation();
 
@@ -172,33 +175,31 @@ async function fetchTTS() {
 }
 
 /**
- * 订阅打卡通知
+ * 一次性订阅打卡通知
  */
 function triggerSubscribe() {
-  if (subscribeCache.get()) return;
-  subscribeCache.set();
   uni.requestSubscribeMessage({
-    tmplIds: [SIGN_NOTIFY_ID],
+    tmplIds: [SIGN_NOTIFY_ID1, SIGN_NOTIFY_ID2, SIGN_NOTIFY_ID3],
     success(res) {
       console.log('requestSubscribeMessage success: ', res);
-      const status = res[SIGN_NOTIFY_ID as keyof typeof res];
+      /*   const status = res[SIGN_NOTIFY_ID as keyof typeof res];
       if (status === 'reject') {
-        /* uni.showModal({
+       uni.showModal({
             title: '提示',
             content: '请在设置中开启订阅',
             showCancel: true,
             success: ({ confirm, cancel }) => {
               if (confirm) uni.openSetting({ withSubscriptions: true });
             }
-          }); */
-      }
+          }); 
+      }*/
     },
     fail(err) {
-      uni.showToast({
+      /* uni.showToast({
         title: err.errMsg,
         icon: 'error',
         mask: true
-      });
+      }); */
     }
   });
 }

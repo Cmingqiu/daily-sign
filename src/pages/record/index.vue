@@ -59,7 +59,7 @@ const isShowTodayBtn = computed(() => {
 });
 
 // 单选当天的打卡详情
-const detail = computed<Array<string | null>>(() => {
+const detail = computed(() => {
   const today = actDay.value[0];
   const todayRecord = curMonthRecords.value.find(
     record => record.date === today
@@ -68,10 +68,10 @@ const detail = computed<Array<string | null>>(() => {
   const workIn = details.find(({ record_type }) => record_type === 1);
   const workOut = details.find(({ record_type }) => record_type === 2);
   const clock_in = workIn?.timestamp
-      ? dayjs(workIn?.timestamp).format('HH:mm:ss')
+      ? { id: workIn.id, time: dayjs(workIn?.timestamp).format('HH:mm:ss') }
       : null,
     clock_out = workOut?.timestamp
-      ? dayjs(workOut?.timestamp).format('HH:mm:ss')
+      ? { id: workOut.id, time: dayjs(workOut?.timestamp).format('HH:mm:ss') }
       : null;
 
   return [clock_in, clock_out];

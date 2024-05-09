@@ -9,7 +9,7 @@ export interface RecordList {
   detail: Array<RecordDetail>;
 }
 interface RecordDetail {
-  id: string;
+  id: number;
   user_id: string;
   work_date: string;
   timestamp: number;
