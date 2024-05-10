@@ -8,7 +8,7 @@
             <u-icon
               v-if="wordOnTime"
               name="checkmark-circle-fill"
-              :color="isLate ? 'rgb(255, 128, 64)' : 'rgb(136, 22, 236)'"
+              :color="isLate ? 'rgb(255, 128, 64)' : '#8816ec'"
               size="28"></u-icon>
             <text ml-1>{{ wordOnTime ? wordOnTime : '未打卡' }}</text>
           </view>
@@ -20,7 +20,7 @@
             <u-icon
               v-if="wordOffTime"
               name="checkmark-circle-fill"
-              color="rgb(136, 22, 236)"
+              color="#8816ec"
               size="28"></u-icon>
             <text ml-1>{{ wordOffTime ? wordOffTime : '未打卡' }}</text>
           </view>
@@ -44,11 +44,7 @@
 
       <!-- 位置 -->
       <view mt-5 flex items-center v-show="address">
-        <uni-icons
-          mr-2
-          type="paperplane-filled"
-          color="rgb(136, 22, 236)"
-          size="24" />
+        <uni-icons mr-2 type="paperplane-filled" color="#8816ec" size="24" />
         {{ address }}
       </view>
     </view>
@@ -274,7 +270,7 @@ function clearBeforeMonthCache() {
     justify-content: center;
     color: $uni-text-color-inverse;
     background: linear-gradient(to right, rgb(66, 83, 216), rgb(213, 51, 186));
-    box-shadow: 0 4rpx 15rpx 0 rgb(136, 22, 236);
+    box-shadow: 0 4rpx 15rpx 0 #8816ec;
     position: relative;
     .title {
       font-size: 38rpx;

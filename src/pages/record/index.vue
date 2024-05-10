@@ -30,6 +30,7 @@ import SignDetail from './SignDetail.vue';
 import getFormatDate from '@/utils/getFormatDate';
 import { getRecordList, type RecordList } from '@/api/dailySign';
 import dayjs from 'dayjs';
+import type { ISignDetail } from './hooks/usePicker';
 
 interface CalenderDate {
   year: number;
@@ -67,14 +68,21 @@ const detail = computed(() => {
   const details = todayRecord?.detail || [];
   const workIn = details.find(({ record_type }) => record_type === 1);
   const workOut = details.find(({ record_type }) => record_type === 2);
-  const clock_in = workIn?.timestamp
-      ? { id: workIn.id, time: dayjs(workIn?.timestamp).format('HH:mm:ss') }
-      : null,
-    clock_out = workOut?.timestamp
-      ? { id: workOut.id, time: dayjs(workOut?.timestamp).format('HH:mm:ss') }
-      : null;
+  const result: ISignDetail[] = [];
+  workIn?.timestamp &&
+    result.push({
+      id: workIn.id,
+      time: dayjs(workIn?.timestamp).format('HH:mm:ss'),
+      work_date: workIn.work_date
+    });
+  workOut?.timestamp &&
+    result.push({
+      id: workOut.id,
+      time: dayjs(workOut?.timestamp).format('HH:mm:ss'),
+      work_date: workOut.work_date
+    });
 
-  return [clock_in, clock_out];
+  return result;
 });
 
 const onDayClick = ({ date }: { date: string; week: string }) => {
