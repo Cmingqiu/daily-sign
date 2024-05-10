@@ -13,7 +13,7 @@ export interface ISignDetail {
   work_date: string;
 }
 
-export default function (props: IRecodeDetail) {
+export default function (props: IRecodeDetail, emits: (e: 'update') => void) {
   const uPickerRef = ref();
   const showPicker = ref(false); // 更新时间选择器的显隐
 
@@ -57,6 +57,7 @@ export default function (props: IRecodeDetail) {
     await updateRecords(id, timestamp);
     showPicker.value = false;
     uni.showToast({ title: '更新成功', icon: 'success' });
+    emits('update');
   };
 
   return {

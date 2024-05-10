@@ -18,7 +18,7 @@
         @tap="backToday"
         >回到今天</view
       >
-      <SignDetail :detail="detail" />
+      <SignDetail :detail="detail" @update="fetchRecordList" />
     </view>
   </LayoutContainer>
 </template>

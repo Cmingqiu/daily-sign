@@ -42,6 +42,8 @@ interface IRecodeDetail {
   detail: Array<ISignDetail | null>;
 }
 
+const emits = defineEmits<{ (e: 'update'): void }>();
+
 const props = withDefaults(defineProps<IRecodeDetail>(), {
   detail: () => []
 });
@@ -51,7 +53,7 @@ const {
   showPicker,
   pickerColumns,
   pickerConfirm
-} = usePicker(props);
+} = usePicker(props, emits);
 </script>
 
 <style scoped lang="scss">
