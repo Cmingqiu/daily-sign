@@ -53,7 +53,9 @@ export default function (props: IRecodeDetail, emits: (e: 'update') => void) {
     indexs: any[];
   }) => {
     let { id, work_date } = props.detail[idx]!;
-    const timestamp = dayjs(`${work_date} ${h}:${m}:${s}`).valueOf();
+    const timestamp = dayjs(
+      `${work_date.replaceAll('-', '/')} ${h}:${m}:${s}`
+    ).valueOf();
     console.log('日期组件选择的值： ', idx, h, m, s);
     await updateRecords(id, timestamp);
     showPicker.value = false;

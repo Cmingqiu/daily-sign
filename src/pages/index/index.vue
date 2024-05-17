@@ -112,9 +112,9 @@ const time = computed(() => dayjs(currentTime.value).format('HH:mm:ss'));
 const isLate = computed(() =>
   wordOnTime.value
     ? new Date(
-        `${dayjs().format('YYYY-MM-DD')} ${wordOnTime.value}`
+        `${dayjs().format('YYYY/MM/DD')} ${wordOnTime.value}`
       ).getTime() >=
-      new Date(`${dayjs().format('YYYY-MM-DD')} 08:31:00`).getTime()
+      new Date(`${dayjs().format('YYYY/MM/DD')} 08:31:00`).getTime()
     : false
 );
 const signButtonTitle = computed(() => {
