@@ -61,7 +61,8 @@ export default function http<T>(config: RequestConfig) {
       },
       complete({ data }: any) {
         console.info('请求log====> ', formatURL(config.url));
-        console.log(data);
+        console.log('请求----------> ', config.data);
+        console.log('响应----------> ', data);
         console.info('======');
         config.showLoading && uni.hideLoading();
       }
