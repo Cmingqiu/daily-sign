@@ -31,6 +31,7 @@ import getFormatDate from '@/utils/getFormatDate';
 import { getRecordList, type RecordList } from '@/api/dailySign';
 import dayjs from 'dayjs';
 import type { ISignDetail } from './hooks/usePicker';
+import { RECORD_TYPE } from '@/config/enums';
 
 interface CalenderDate {
   year: number;
@@ -49,7 +50,7 @@ const curMonthRecords = ref<Array<RecordList>>([]); // 当月所有的打卡记�
 // 正常打卡的日期
 const signedDay = computed(() =>
   curMonthRecords.value
-    .filter(record => record.clock_in && record.clock_in)
+    .filter(record => record.clock_in && record.clock_out)
     .map(record => record.date)
 );
 
@@ -66,8 +67,12 @@ const detail = computed(() => {
     record => record.date === today
   );
   const details = todayRecord?.detail || [];
-  const workIn = details.find(({ record_type }) => record_type === 1);
-  const workOut = details.find(({ record_type }) => record_type === 2);
+  const workIn = details.find(
+    ({ record_type }) => record_type === RECORD_TYPE.ON
+  );
+  const workOut = details.find(
+    ({ record_type }) => record_type === RECORD_TYPE.OFF
+  );
   const result: ISignDetail[] = [];
   workIn?.timestamp &&
     result.push({

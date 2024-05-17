@@ -64,6 +64,7 @@ export async function updateRecords(id: number, timestamp: number) {
       user_id,
       timestamp,
       record_type: forenoon ? 1 : 2 // 1上班  2 下班
-    }
+    },
+    showLoading: true
   });
 }

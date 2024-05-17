@@ -41,6 +41,11 @@
       <view class="record-button" @click="cancelOneSubscribe"
         >取消当次订阅</view
       >
+      <image
+        class="subscribe-button"
+        src="@/static/subscribe.gif"
+        @click="triggerSubscribe"
+        mode="aspectFit" />
 
       <!-- 位置 -->
       <view mt-5 flex items-center v-show="address">
@@ -236,6 +241,7 @@ function clearBeforeMonthCache() {
   align-items: center;
   position: relative;
   z-index: 5;
+  height: 100%;
   .result-row {
     display: flex;
     justify-content: center;
@@ -287,6 +293,13 @@ function clearBeforeMonthCache() {
     }
   }
 
+  .subscribe-button {
+    position: absolute;
+    right: -35rpx;
+    bottom: -10rpx;
+    width: 200rpx;
+    height: 200rpx;
+  }
   .record-button {
     text-align: center;
     color: rgb(111, 12, 250);

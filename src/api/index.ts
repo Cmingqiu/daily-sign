@@ -5,6 +5,8 @@ interface RequestConfig {
   method?: RequestMethod;
   data?: Record<string, any> | string | ArrayBuffer;
   header?: Record<string, any>;
+  // 自定义字段
+  showLoading?: boolean; // 是否展示全屏loading
 }
 
 interface UniResponse<T> {
@@ -26,6 +28,7 @@ function formatURL(url: string) {
 }
 
 export default function http<T>(config: RequestConfig) {
+  config.showLoading && uni.showLoading({ title: '加载中...', mask: true });
   return new Promise<T>(async (resolve, reject) => {
     uni.request({
       ...config,
@@ -46,7 +49,10 @@ export default function http<T>(config: RequestConfig) {
               : uni.showToast({ title: data.msg, icon: 'error' });
           } else resolve(data as T);
         } else {
-          uni.showToast({ title: errMsg, icon: 'error' });
+          uni.showToast({
+            title: `状态码 : ${statusCode} ，错误 : ${errMsg}`,
+            icon: 'error'
+          });
         }
       },
       fail(error) {
@@ -57,6 +63,7 @@ export default function http<T>(config: RequestConfig) {
         console.info('请求log====> ', formatURL(config.url));
         console.log(data);
         console.info('======');
+        config.showLoading && uni.hideLoading();
       }
     });
   });
