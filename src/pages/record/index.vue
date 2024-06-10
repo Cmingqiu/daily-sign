@@ -75,13 +75,13 @@ const detail = computed(() => {
   );
   const result: ISignDetail[] = [];
   workIn?.timestamp &&
-    result.push({
+    (result[0] = {
       id: workIn.id,
       time: dayjs(workIn?.timestamp).format('HH:mm:ss'),
       work_date: workIn.work_date
     });
   workOut?.timestamp &&
-    result.push({
+    (result[1] = {
       id: workOut.id,
       time: dayjs(workOut?.timestamp).format('HH:mm:ss'),
       work_date: workOut.work_date
