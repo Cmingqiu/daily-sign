@@ -40,7 +40,6 @@ export default function (props: IRecodeDetail, emits: (e: 'update') => void) {
     let [nowHour, nowMinute, nowSecond] = dayjs().format('HH:mm:ss').split(':');
     const firstColumnValue = isForenoon() ? 0 : 1;
     const detail = props.detail[firstColumnValue];
-    console.log('==== ',detail);
     if (detail) {
       const [h, m, s] = detail.time.split(':');
       nowHour = h;
@@ -56,14 +55,16 @@ export default function (props: IRecodeDetail, emits: (e: 'update') => void) {
     indexs: any[];
   }) => {
     const isUpdateTime = props.detail[idx] !== undefined;
-    let { id } = props.detail[idx]!;
     const timestamp = dayjs(
       `${props.actDay[0].replaceAll('-', '/')} ${h}:${m}:${s}`
     ).valueOf();
     console.log('日期组件选择的值： ', idx, h, m, s);
     const params: RecordParams = { timestamp };
     // 更新打卡时间
-    if (isUpdateTime) params.id = id;
+    if (isUpdateTime) {
+      const { id } = props.detail[idx]!;
+      params.id = id;
+    }
     try {
       await setOrUpdateRecord(params);
       uni.showToast({ title: '更新成功', icon: 'success' });
