@@ -18,14 +18,13 @@
         @tap="backToday"
         >回到今天</view
       >
-      <SignDetail :detail="detail" @update="fetchRecordList" />
+      <SignDetail :detail="detail" :actDay="actDay" @update="fetchRecordList" />
     </view>
   </LayoutContainer>
 </template>
 
 <script lang="ts" setup>
-import { onShow } from '@dcloudio/uni-app';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import SignDetail from './SignDetail.vue';
 import getFormatDate from '@/utils/getFormatDate';
 import { getRecordList, type RecordList } from '@/api/dailySign';
@@ -116,7 +115,7 @@ async function fetchRecordList(day = dayjs().format('YYYY-MM')) {
   curMonthRecords.value = (await getRecordList(day)) || [];
 }
 
-onShow(fetchRecordList);
+onMounted(fetchRecordList);
 </script>
 
 <style lang="scss" scoped>

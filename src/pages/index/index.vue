@@ -66,7 +66,7 @@ import dayjs from 'dayjs';
 import { ref, computed, onBeforeUnmount } from 'vue';
 import useFirework from './useFirework';
 import useLocation from './useLocation';
-import { getRecordList, setRecords } from '@/api/dailySign';
+import { getRecordList, setOrUpdateRecord } from '@/api/dailySign';
 import { getLatestHoliday } from '@/api/holiday';
 import { cancelOneSubscribeAPI } from '@/api/subscribe';
 import { isForenoon } from '@/utils/isForenoon';
@@ -81,7 +81,7 @@ const { address } = useLocation();
 
 // 打卡逻辑
 const doSign = async () => {
-  await setRecords(new Date().getTime());
+  await setOrUpdateRecord({ timestamp: new Date().getTime() });
   initState();
 };
 
