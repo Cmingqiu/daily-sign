@@ -24,7 +24,7 @@ export default function (props: IRecodeDetail, emits: (e: 'update') => void) {
   const seconds = new Array(60).fill(0).map((v, index) => index);
   const firstColumns = ['上班', '下班'];
   const pickerColumns = computed(() => [
-    firstColumns.slice(0, props.detail.length),
+    firstColumns, //.slice(0, props.detail.length),
     hours,
     minutes,
     seconds

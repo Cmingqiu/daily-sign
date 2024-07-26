@@ -95,6 +95,7 @@ const sign = async () => {
   toggle.value = false;
   await doSign();
   createFirework();
+  uni.vibrateShort();
 };
 
 const currentTime = ref<Date>(new Date()); // 当前时间
