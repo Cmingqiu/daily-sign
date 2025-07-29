@@ -21,7 +21,7 @@ interface Response<T> {
   status: 0;
 }
 
-const baseURL = 'https://worktime.icu/worktime';
+const baseURL = 'https://worktime.top/worktime';
 
 function formatURL(url: string) {
   return url.startsWith('http') ? url : baseURL + url;

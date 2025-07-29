@@ -1,10 +1,11 @@
 import { ref, computed, watch } from 'vue';
 import dayjs from 'dayjs';
 import { isForenoon } from '@/utils/isForenoon';
-import { updateRecords } from '@/api/dailySign';
+import { setOrUpdateRecord, type RecordParams } from '@/api/dailySign';
 
 export interface IRecodeDetail {
   detail: Array<ISignDetail | null>;
+  actDay: string[];
 }
 
 export interface ISignDetail {
@@ -23,7 +24,7 @@ export default function (props: IRecodeDetail, emits: (e: 'update') => void) {
   const seconds = new Array(60).fill(0).map((v, index) => index);
   const firstColumns = ['上班', '下班'];
   const pickerColumns = computed(() => [
-    firstColumns.slice(0, props.detail.length),
+    firstColumns, //.slice(0, props.detail.length),
     hours,
     minutes,
     seconds
@@ -36,15 +37,16 @@ export default function (props: IRecodeDetail, emits: (e: 'update') => void) {
   });
 
   function setDefaultPickerIndex() {
-    const [nowHour, nowMinute, nowSecond] = dayjs()
-      .format('HH:mm:ss')
-      .split(':');
-    return [
-      isForenoon() ? 0 : props.detail.length - 1,
-      +nowHour,
-      +nowMinute,
-      +nowSecond
-    ];
+    let [nowHour, nowMinute, nowSecond] = dayjs().format('HH:mm:ss').split(':');
+    const firstColumnValue = isForenoon() ? 0 : 1;
+    const detail = props.detail[firstColumnValue];
+    if (detail) {
+      const [h, m, s] = detail.time.split(':');
+      nowHour = h;
+      nowMinute = m;
+      nowSecond = s;
+    }
+    return [firstColumnValue, +nowHour, +nowMinute, +nowSecond];
   }
 
   const pickerConfirm = async ({
@@ -52,15 +54,25 @@ export default function (props: IRecodeDetail, emits: (e: 'update') => void) {
   }: {
     indexs: any[];
   }) => {
-    let { id, work_date } = props.detail[idx]!;
+    const isUpdateTime = props.detail[idx] !== undefined;
     const timestamp = dayjs(
-      `${work_date.replaceAll('-', '/')} ${h}:${m}:${s}`
+      `${props.actDay[0].replaceAll('-', '/')} ${h}:${m}:${s}`
     ).valueOf();
     console.log('日期组件选择的值： ', idx, h, m, s);
-    await updateRecords(id, timestamp);
-    showPicker.value = false;
-    uni.showToast({ title: '更新成功', icon: 'success' });
-    emits('update');
+    const params: RecordParams = { timestamp };
+    // 更新打卡时间
+    if (isUpdateTime) {
+      const { id } = props.detail[idx]!;
+      params.id = id;
+    }
+    try {
+      await setOrUpdateRecord(params);
+      uni.showToast({ title: '更新成功', icon: 'success' });
+      showPicker.value = false;
+      emits('update');
+    } catch (error) {
+      uni.showToast({ title: '更新失败', icon: 'error' });
+    }
   };
 
   return {

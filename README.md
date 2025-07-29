@@ -29,3 +29,5 @@
 - unplugin-vue-components
 - unocss@0.58.9 (高版本不生效)
 - auto-import-types
+
+- [ ] 皮肤主题自适应

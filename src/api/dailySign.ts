@@ -16,6 +16,11 @@ interface RecordDetail {
   record_type: number;
 }
 
+export interface RecordParams {
+  id?: number;
+  timestamp: number;
+}
+
 /**
  * 获取1个月的打卡记录
  * @param yearMonth 例如2024-04
@@ -25,40 +30,23 @@ export async function getRecordList(yearMonth: string) {
   const unionId = await getUnionId();
   return http<RecordList[]>({
     url: `/records/list/${unionId}/${yearMonth}`,
-    method: 'GET'
+    method: 'GET',
+    showLoading: true
   });
 }
 
 /**
- * 设置打卡记录
- * @param data Record
+ * 新增或更新打卡记录
+ * @param data Record 无id是新增，传入id就是更新
  * @returns
  */
-export async function setRecords(timestamp: number) {
+export async function setOrUpdateRecord({ id, timestamp }: RecordParams) {
   const user_id = await getUnionId();
   const forenoon = isForenoon(timestamp);
+  const method = id === undefined ? 'POST' : 'PUT';
   return http({
     url: '/records',
-    method: 'POST',
-    data: {
-      user_id,
-      timestamp,
-      record_type: forenoon ? 1 : 2 // 1上班  2 下班
-    }
-  });
-}
-
-/**
- * 更新打卡记录
- * @param data Record
- * @returns
- */
-export async function updateRecords(id: number, timestamp: number) {
-  const user_id = await getUnionId();
-  const forenoon = isForenoon(timestamp);
-  return http({
-    url: '/records',
-    method: 'PUT',
+    method,
     data: {
       id,
       user_id,

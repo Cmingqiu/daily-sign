@@ -40,12 +40,14 @@ import usePicker, { type ISignDetail } from './hooks/usePicker';
 // todo: uni-app 暂不支持导入defineProps的类型
 interface IRecodeDetail {
   detail: Array<ISignDetail | null>;
+  actDay: string[];
 }
 
 const emits = defineEmits<{ (e: 'update'): void }>();
 
 const props = withDefaults(defineProps<IRecodeDetail>(), {
-  detail: () => []
+  detail: () => [],
+  actDay: () => []
 });
 const {
   uPickerRef,
