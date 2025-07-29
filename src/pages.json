@@ -32,10 +32,7 @@
     ],
     "color": "#555",
     "selectedColor": "#8816ec",
-    "backgroundColor": "#ffffff",
-    "midButton": {
-      "text": "home"
-    }
+    "backgroundColor": "#ffffff"
   },
   "pages": [
     {
@@ -54,6 +51,12 @@
       "path": "pages/mine/index",
       "style": {
         "navigationBarTitleText": "我的"
+      }
+    },
+    {
+      "path": "pages/secondPage/index",
+      "style": {
+        "navigationBarTitleText": "二级页"
       }
     }
   ],

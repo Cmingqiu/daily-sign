@@ -29,6 +29,7 @@ function formatURL(url: string) {
 
 export default function http<T>(config: RequestConfig) {
   config.showLoading && uni.showLoading({ title: '加载中...', mask: true });
+  console.info(`请求log ${formatURL(config.url)}==========> `, config.data);
   return new Promise<T>(async (resolve, reject) => {
     uni.request({
       ...config,
@@ -38,6 +39,7 @@ export default function http<T>(config: RequestConfig) {
       },
       success(res) {
         const { statusCode, errMsg, data } = res as any as UniResponse<T>;
+        console.log(`响应 ${formatURL(config.url)}----------> `, data);
         if (statusCode === 200) {
           if (
             !config.url.startsWith('http') &&
@@ -60,10 +62,6 @@ export default function http<T>(config: RequestConfig) {
         reject(error);
       },
       complete({ data }: any) {
-        console.info('请求log====> ', formatURL(config.url));
-        console.log('请求----------> ', config.data);
-        console.log('响应----------> ', data);
-        console.info('======');
         config.showLoading && uni.hideLoading();
       }
     });

@@ -18,6 +18,10 @@
 
       <open-data font-bold type="userNickName" @click="addPhoneCalendar" />
     </view>
+
+    <view @click="toSecondPage">
+      <button>二级页</button>
+    </view>
   </LayoutContainer>
 </template>
 
@@ -135,6 +139,12 @@ function handleAddCalendar() {
     }
   });
 }
+
+const toSecondPage = () => {
+  uni.navigateTo({
+    url: '/pages/secondPage/index'
+  });
+};
 </script>
 
 <style lang="scss" scoped></style>
